@@ -290,6 +290,36 @@ class MemoryMonitor:
             f"global_step={self.global_step}"
         )
 
+    def log_step(self, epoch, global_step):
+        """
+        在优化器更新后记录显存，并同步到 SwanLab。
+        横轴使用训练 global_step。
+        """
+        if not self._running:
+            return
+
+        self.current_epoch = int(epoch)
+        self.global_step = int(global_step)
+
+        metrics = self._get_torch_memory()
+        if not metrics:
+            return
+
+        swanlab_metrics = {
+            "gpu/allocated_gb": metrics["torch_allocated_gb"],
+            "gpu/reserved_gb": metrics["torch_reserved_gb"],
+            "gpu/peak_gb": metrics["torch_peak_allocated_gb"],
+        }
+
+        if self.swanlab_run is not None:
+            try:
+                self.swanlab_run.log(
+                    swanlab_metrics,
+                    step=int(global_step),
+                )
+            except Exception as exc:
+                print(f"[MemoryMonitor] SwanLab Step 记录失败：{exc}")
+
     def stop(self):
         if not self._running:
             return

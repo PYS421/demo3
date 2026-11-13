@@ -440,22 +440,22 @@ python scripts/evaluate_qlora.py
 
 该实验采用历史第二轮的 LoRA 配置，LoRA rank 为 32，alpha 为 64。
 
-### 8.2 历史 QLoRA 实验结果
+### 8.2 最新 QLoRA 实验结果
 
-此前 QLoRA 实验记录中的一组验证集结果：
+本次 QLoRA 实验采用 Batch Size = 1、Gradient Accumulation Steps = 8，在完整验证集上的最佳结果如下：
 
 | 指标 | 数值 |
 |---|---:|
 | Best Epoch | 3 |
-| Precision | 84.55% |
-| Recall | 80.93% |
-| F1-score | 82.70% |
-| TP | 2,347 |
-| FP | 429 |
-| FN | 553 |
-| Parse Errors | 11 |
+| Precision | 84.30% |
+| Recall | 80.55% |
+| F1-score | 82.38% |
+| TP | 2,336 |
+| FP | 435 |
+| FN | 564 |
+| Parse Errors | 15 |
 
-该结果属于历史实验记录，与本节后续最新 LoRA、QLoRA 对比实验分开统计。
+本次实验共完成 3 个 Epoch，最佳模型出现在第 3 个 Epoch，Global Step 为 4,689。训练配置采用 QLoRA 4-bit NF4 量化、双重量化、BF16 计算精度，并启用 Gradient Checkpointing。
 
 ### 8.3 历史测试集结果
 
@@ -475,7 +475,7 @@ python scripts/evaluate_qlora.py
 
 ### 8.4 最新 LoRA 与 QLoRA 验证集对比实验
 
-本次实验于 2026 年 11 月 4 日完成，在 NVIDIA RTX 5090 GPU 上进行。
+LoRA 实验于 2026 年 11 月 4 日在 NVIDIA RTX 5090 GPU 上完成；本次 QLoRA 实验于 2026 年 11 月 12 日在 NVIDIA RTX 4090 GPU 上完成。
 
 两种方法均采用 BF16，并开启 Gradient Checkpointing。除基座模型量化方式外，主要训练参数保持一致。
 
@@ -483,8 +483,8 @@ python scripts/evaluate_qlora.py
 
 | 参数 | LoRA | QLoRA |
 |---|---:|---:|
-| Batch Size | 4 | 4 |
-| Gradient Accumulation | 2 | 2 |
+| Batch Size | 4 | 1 |
+| Gradient Accumulation | 2 | 8 |
 | Epochs | 3 | 3 |
 | Learning Rate | 5e-5 | 5e-5 |
 | Weight Decay | 0.01 | 0.01 |
@@ -502,40 +502,36 @@ python scripts/evaluate_qlora.py
 | 指标 | LoRA | QLoRA |
 |---|---:|---:|
 | Best Epoch | 3 | 3 |
-| Precision | 84.43% | 84.66% |
-| Recall | 80.79% | 80.69% |
-| **F1-score** | **82.57%** | **82.63%** |
-| TP | 2,343 | 2,340 |
-| FP | 432 | 424 |
-| FN | 557 | 560 |
-| Parse Errors | 16 | 16 |
+| Precision | 84.43% | 84.30% |
+| Recall | 80.79% | 80.55% |
+| **F1-score** | **82.57%** | **82.38%** |
+| TP | 2,343 | 2,336 |
+| FP | 432 | 435 |
+| FN | 557 | 564 |
+| Parse Errors | 16 | 15 |
 
-两种方法均在第三轮取得最佳验证集结果。
-
-QLoRA 的 F1-score 为 82.63%，LoRA 的 F1-score 为 82.57%，两者相差约 0.05 个百分点，整体表现非常接近。
+两种方法均在第三轮取得最佳验证集结果。本次 QLoRA 实验采用 Batch Size = 1、Gradient Accumulation Steps = 8，运行于 NVIDIA RTX 4090 GPU；LoRA 结果则来自 2026 年 11 月 4 日在 RTX 5090 GPU 上完成的实验。因此，这里展示的是两组实验结果，不属于严格控制硬件与批次配置后的直接对照。
 
 #### （3）显存使用情况
 
 | 指标 | LoRA | QLoRA |
 |---|---:|---:|
-| GPU | RTX 5090 | RTX 5090 |
-| PyTorch 峰值分配显存 | 19.32 GB | 13.74 GB |
-| GPU 整体峰值占用 | 26.17 GB | 18.85 GB |
+| GPU | RTX 5090 | RTX 4090 |
+| PyTorch 峰值分配显存 | 19.32 GB | 10.10 GB |
+| GPU 整体峰值占用 | 26.17 GB | 11.19 GB |
 | Gradient Checkpointing | 开启 | 开启 |
 
 显存对比结果：
 
-- QLoRA 的 PyTorch 峰值分配显存比 LoRA 减少约 28.9%。
-- QLoRA 的 GPU 整体峰值占用比 LoRA 减少约 28.0%。
-- 两种方法均成功完成三个 Epoch 的训练，没有发生显存溢出。
+- 本次 QLoRA 实验的 PyTorch 峰值分配显存为 10.10 GB，GPU 整体峰值占用为 11.19 GB。
+- 本次 QLoRA 使用 Batch Size = 1、Gradient Accumulation Steps = 8，在 RTX 4090 24GB GPU 上完成了三个 Epoch 的训练。
+- 由于 LoRA 与本次 QLoRA 实验使用的 GPU 和批次配置不同，显存数值仅作实验记录，不将两者的差异直接归因于微调方法。
 
 #### （4）实验分析
 
-从验证集结果来看，LoRA 和 QLoRA 的实体识别效果较为接近。QLoRA 在本次实验中取得了略高的 F1-score，同时具有更低的显存占用。
+从验证集结果来看，本次 QLoRA 实验取得 82.38% 的 F1-score，Precision 为 84.30%，Recall 为 80.55%。与 README 中记录的 LoRA 结果相比，F1-score 相差约 0.19 个百分点。
 
-这表明，在本次实验配置下，QLoRA 能够以较低的显存开销取得与普通 LoRA 接近的识别效果。
-
-需要注意的是，本次结果来自单次实验，F1-score 的微小差异不足以证明某种微调方法具有显著的泛化性能优势。后续仍需要结合独立测试集评估进一步分析。
+需要注意的是，两组实验的 GPU 型号和批次配置不同，因此该结果主要用于记录本次 QLoRA 实验表现，不应视为严格控制变量的 LoRA 与 QLoRA 方法对比。后续仍需要结合独立测试集评估进一步分析。
 
 ## 9. 错误分析
 
@@ -567,7 +563,6 @@ QLoRA 的 F1-score 为 82.63%，LoRA 的 F1-score 为 82.57%，两者相差约 0
 8. 通过 Precision、Recall、F1-score 及 TP、FP、FN 分析模型识别效果。
 9. 对漏检、误检和输出格式错误进行进一步分析。
 
-最新一组实验中，LoRA 和 QLoRA 分别取得 82.57% 和 82.63% 的验证集 F1-score。QLoRA 在本次实验中将 PyTorch 峰值分配显存降低约 28.9%，表现出较好的显存效率。
+最新记录的 LoRA 和 QLoRA 实验分别取得 82.57% 和 82.38% 的验证集 F1-score。QLoRA 实验的 PyTorch 峰值分配显存为 10.10 GB，GPU 整体峰值占用为 11.19 GB。由于两组实验使用的 GPU 型号和批次配置不同，显存数据仅作为实验记录，不将差异直接归因于微调方法。
 
 后续可以进一步开展独立测试集评估、不同随机种子实验和错误样本分析，以更全面地评价模型的实体识别能力及不同微调方法的实际表现。
-

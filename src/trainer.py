@@ -168,7 +168,7 @@ class CustomTrainer:
         print(f"BF16：{self.use_bf16}")
         print(f"输出目录：{self.output_dir}")
 
-    def _log(self, metrics):
+    def _log(self, metrics, global_step=None):
         print(
             json.dumps(
                 metrics,
@@ -178,7 +178,10 @@ class CustomTrainer:
         )
 
         if self.swanlab_run is not None:
-            self.swanlab_run.log(metrics)
+            self.swanlab_run.log(
+                metrics,
+                step=global_step,
+            )
 
     def train(self, resume_from_checkpoint=None):
         start_epoch = 0
@@ -270,6 +273,13 @@ class CustomTrainer:
 
                     self.global_step += 1
 
+                    # 每次真正完成优化器更新后记录显存
+                    if self.memory_monitor is not None:
+                        self.memory_monitor.log_step(
+                            epoch=epoch + 1,
+                            global_step=self.global_step,
+                        )
+
             train_loss = (
                 epoch_loss / max(epoch_batches, 1)
             )
@@ -301,7 +311,7 @@ class CustomTrainer:
                 "learning_rate": learning_rate,
             }
 
-            self._log(metrics)
+            self._log(metrics, global_step=self.global_step)
 
             current_f1 = eval_metrics["eval_f1"]
 

@@ -502,15 +502,15 @@ LoRA 实验于 2026 年 11 月 4 日在 NVIDIA RTX 5090 GPU 上完成；本次 Q
 | 指标 | LoRA | QLoRA |
 |---|---:|---:|
 | Best Epoch | 3 | 3 |
-| Precision | 84.43% | 84.30% |
-| Recall | 80.79% | 80.55% |
-| **F1-score** | **82.57%** | **82.38%** |
-| TP | 2,343 | 2,336 |
-| FP | 432 | 435 |
-| FN | 557 | 564 |
-| Parse Errors | 16 | 15 |
+| Precision | 84.43% | 84.44% |
+| Recall | 80.79% | 80.48% |
+| **F1-score** | **82.57%** | **82.41%** |
+| TP | 2,343 | 2,334 |
+| FP | 432 | 430 |
+| FN | 557 | 566 |
+| Parse Errors | 16 | 14 |
 
-两种方法均在第三轮取得最佳验证集结果。本次 QLoRA 实验采用 Batch Size = 1、Gradient Accumulation Steps = 8，运行于 NVIDIA RTX 4090 GPU；LoRA 结果则来自 2026 年 11 月 4 日在 RTX 5090 GPU 上完成的实验。因此，这里展示的是两组实验结果，不属于严格控制硬件与批次配置后的直接对照。
+两种方法均在第三轮取得最佳验证集结果。本次 QLoRA 实验采用 Batch Size = 1、Gradient Accumulation Steps = 4，运行于 NVIDIA RTX 4090 GPU；LoRA 结果则来自 2026 年 11 月 4 日在 RTX 5090 GPU 上完成的实验。因此，这里展示的是两组实验结果，不属于严格控制硬件与批次配置后的直接对照。
 
 #### （3）显存使用情况
 
@@ -524,12 +524,12 @@ LoRA 实验于 2026 年 11 月 4 日在 NVIDIA RTX 5090 GPU 上完成；本次 Q
 显存对比结果：
 
 - 本次 QLoRA 实验的 PyTorch 峰值分配显存为 10.10 GB，GPU 整体峰值占用为 11.19 GB。
-- 本次 QLoRA 使用 Batch Size = 1、Gradient Accumulation Steps = 8，在 RTX 4090 24GB GPU 上完成了三个 Epoch 的训练。
+- 本次 QLoRA 使用 Batch Size = 1、Gradient Accumulation Steps = 4，在 RTX 4090 24GB GPU 上完成了三个 Epoch 的训练。
 - 由于 LoRA 与本次 QLoRA 实验使用的 GPU 和批次配置不同，显存数值仅作实验记录，不将两者的差异直接归因于微调方法。
 
 #### （4）实验分析
 
-从验证集结果来看，本次 QLoRA 实验取得 82.38% 的 F1-score，Precision 为 84.30%，Recall 为 80.55%。与 README 中记录的 LoRA 结果相比，F1-score 相差约 0.19 个百分点。
+从验证集结果来看，本次 QLoRA 实验取得 82.41% 的 F1-score，Precision 为 84.44%，Recall 为 80.48%。与 README 中记录的 LoRA 结果相比，F1-score 相差约 0.16 个百分点。
 
 需要注意的是，两组实验的 GPU 型号和批次配置不同，因此该结果主要用于记录本次 QLoRA 实验表现，不应视为严格控制变量的 LoRA 与 QLoRA 方法对比。后续仍需要结合独立测试集评估进一步分析。
 
@@ -563,6 +563,6 @@ LoRA 实验于 2026 年 11 月 4 日在 NVIDIA RTX 5090 GPU 上完成；本次 Q
 8. 通过 Precision、Recall、F1-score 及 TP、FP、FN 分析模型识别效果。
 9. 对漏检、误检和输出格式错误进行进一步分析。
 
-最新记录的 LoRA 和 QLoRA 实验分别取得 82.57% 和 82.38% 的验证集 F1-score。QLoRA 实验的 PyTorch 峰值分配显存为 10.10 GB，GPU 整体峰值占用为 11.19 GB。由于两组实验使用的 GPU 型号和批次配置不同，显存数据仅作为实验记录，不将差异直接归因于微调方法。
+最新记录的 LoRA 和 QLoRA 实验分别取得 82.57% 和 82.41% 的验证集 F1-score。QLoRA 实验的 PyTorch 峰值分配显存为 10.10 GB，GPU 整体峰值占用为 11.19 GB。由于两组实验使用的 GPU 型号和批次配置不同，显存数据仅作为实验记录，不将差异直接归因于微调方法。
 
 后续可以进一步开展独立测试集评估、不同随机种子实验和错误样本分析，以更全面地评价模型的实体识别能力及不同微调方法的实际表现。

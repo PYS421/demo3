@@ -483,8 +483,8 @@ LoRA 实验于 2026 年 11 月 4 日在 NVIDIA RTX 5090 GPU 上完成；本次 Q
 
 | 参数 | LoRA | QLoRA |
 |---|---:|---:|
-| Batch Size | 4 | 1 |
-| Gradient Accumulation | 2 | 4 |
+| Batch Size | 1 | 1 |
+| Gradient Accumulation | 4 | 4 |
 | Epochs | 3 | 3 |
 | Learning Rate | 5e-5 | 5e-5 |
 | Weight Decay | 0.01 | 0.01 |

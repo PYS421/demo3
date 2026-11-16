@@ -442,18 +442,18 @@ python scripts/evaluate_qlora.py
 
 ### 8.2 最新 QLoRA 实验结果
 
-本次 QLoRA 实验采用 Batch Size = 1、Gradient Accumulation Steps = 8，在完整验证集上的最佳结果如下：
+本次 QLoRA 实验采用 Batch Size = 1、Gradient Accumulation Steps = 4，在完整验证集上的最佳结果如下：
 
 | 指标 | 数值 |
 |---|---:|
 | Best Epoch | 3 |
-| Precision | 84.30% |
-| Recall | 80.55% |
-| F1-score | 82.38% |
-| TP | 2,336 |
-| FP | 435 |
-| FN | 564 |
-| Parse Errors | 15 |
+| Precision | 84.44% |
+| Recall | 80.48% |
+| F1-score | 82.41% |
+| TP | 2,334 |
+| FP | 430 |
+| FN | 566 |
+| Parse Errors | 14 |
 
 本次实验共完成 3 个 Epoch，最佳模型出现在第 3 个 Epoch，Global Step 为 4,689。训练配置采用 QLoRA 4-bit NF4 量化、双重量化、BF16 计算精度，并启用 Gradient Checkpointing。
 
@@ -463,8 +463,8 @@ python scripts/evaluate_qlora.py
 
 | 实验 | Precision | Recall | F1-score |
 |---|---:|---:|---:|
-| LoRA（已有检查点） | 约 83.47% | 约 79.05% | 83.20% |
-| QLoRA（已有实验记录） | 83.75% | 77.97% | 82.76% |
+| LoRA | 约 83.47% | 约 79.05% | 83.20% |
+| QLoRA | 83.75% | 77.97% | 82.76% |
 
 **结果说明：**
 
@@ -484,7 +484,7 @@ LoRA 实验于 2026 年 11 月 4 日在 NVIDIA RTX 5090 GPU 上完成；本次 Q
 | 参数 | LoRA | QLoRA |
 |---|---:|---:|
 | Batch Size | 4 | 1 |
-| Gradient Accumulation | 2 | 8 |
+| Gradient Accumulation | 2 | 4 |
 | Epochs | 3 | 3 |
 | Learning Rate | 5e-5 | 5e-5 |
 | Weight Decay | 0.01 | 0.01 |
